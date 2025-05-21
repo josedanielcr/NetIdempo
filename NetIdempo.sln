@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetIdempo", "NetIdempo\NetIdempo.csproj", "{426FAB61-F758-4FAA-BB11-D51A85586BB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApi", "TestApi\TestApi.csproj", "{B86A8ADE-658F-4AE4-86F8-ED7902B01FAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{426FAB61-F758-4FAA-BB11-D51A85586BB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426FAB61-F758-4FAA-BB11-D51A85586BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426FAB61-F758-4FAA-BB11-D51A85586BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426FAB61-F758-4FAA-BB11-D51A85586BB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B86A8ADE-658F-4AE4-86F8-ED7902B01FAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B86A8ADE-658F-4AE4-86F8-ED7902B01FAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B86A8ADE-658F-4AE4-86F8-ED7902B01FAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B86A8ADE-658F-4AE4-86F8-ED7902B01FAC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
