@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using NetIdempo.Abstractions.Core;
+
 namespace NetIdempo;
 
-public class NetIdempoMiddleware(RequestDelegate next)
+public class NetIdempoMiddleware(RequestDelegate next, IRequestHandler handler, ILogger<NetIdempoMiddleware> logger)
 {
     public async Task InvokeAsync(HttpContext context)
     { 
-        Console.WriteLine($"[NetIdempo] Request started: {context.Request.Method} {context.Request.Path}"); 
+        logger.LogInformation("Handling request for {Path}", context.Request.Path);
+        handler.HandleRequest(context);
         await next(context);
-        Console.WriteLine($"[NetIdempo] Request ended: {context.Request.Method} {context.Request.Path}");
+        logger.LogInformation("Handled request for {Path}", context.Request.Path);
     }
 }
