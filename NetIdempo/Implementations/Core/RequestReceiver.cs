@@ -7,7 +7,6 @@ public class RequestReceiver(IRequestProcessor requestProcessor): IRequestReceiv
 {
     public async Task<HttpContext> ReceiveRequestAsync(HttpContext context)
     {
-        context = await requestProcessor.ProcessRequestAsync(context);
-        return context;
+         return await requestProcessor.ProcessRequestAsync(context);
     }
 }

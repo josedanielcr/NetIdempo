@@ -2,9 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using NetIdempo.Abstractions.Core;
 using NetIdempo.Abstractions.Helpers;
+using NetIdempo.Abstractions.Services;
 using NetIdempo.Common;
 using NetIdempo.Implementations.Core;
 using NetIdempo.Implementations.Helpers;
+using NetIdempo.Implementations.Services;
 
 namespace NetIdempo.Extensions;
 
@@ -24,6 +26,10 @@ public static class NetIdempoExtensions
     private static void AddConfiguration(IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<NetIdempoOptions>(configuration.GetSection(DefaultConfigurationSectionName));
+        services.AddHttpClient<IRequestExecutor, RequestExecutor>(DefaultConfigurationSectionName, client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(configuration.GetSection("NetIdempo:ServiceTimeoutSeconds").Get<int>());
+        });
     }
 
     private static void AddHelperMethods(IServiceCollection services)
@@ -37,5 +43,7 @@ public static class NetIdempoExtensions
         services.AddSingleton<IRequestProcessor, RequestProcessor>();
         services.AddSingleton<IRequestForwarder, RequestForwarder>();
         services.AddSingleton<IIdempotencyStore, IIdempotencyStore>();
+        services.AddSingleton<IRequestBuilder, RequestBuilder>();
+        services.AddSingleton<IRequestExecutor, RequestExecutor>();
     }
 }
