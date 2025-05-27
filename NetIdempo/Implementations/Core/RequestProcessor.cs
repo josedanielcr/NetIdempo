@@ -17,6 +17,6 @@ public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader
             context = await forwarder.ForwardRequestAsync(context);
         }
         // try to get the idempotency value from cache
-        return null;
+        return context;
     }
 }

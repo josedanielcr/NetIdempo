@@ -18,7 +18,7 @@ public class ContextReader(IOptions<NetIdempoOptions> options) : IContextReader
         
         var path = context.Request.Path.Value;
         if(path == null) return string.Empty;
-        foreach (var service in options.Value.Services.Where(service => path.Contains(service.Key)))
+        foreach (var service in options.Value.Services.Where(service => path.Contains(service.Value.Key)))
         {
             return service.Key;
         }

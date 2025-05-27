@@ -52,6 +52,6 @@ public class TestContextReader
         var serviceKey = contextReader.GetServiceByPath(context);
 
         // Assert
-        Assert.Equal("TestKey", serviceKey);
+        Assert.Equal("TestApi", serviceKey);
     }
 }
