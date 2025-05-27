@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using NetIdempo.Abstractions.Core;
 using NetIdempo.Abstractions.Helpers;
 using NetIdempo.Common;
+using NetIdempo.Implementations.Store;
 
 namespace NetIdempo.Implementations.Core;
 
@@ -14,7 +15,7 @@ public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader
         if (!contextReader.IsKeyPresent(context))
         {
             // If not present, call the forwarding processor
-            context = await forwarder.ForwardRequestAsync(context);
+            await forwarder.ForwardRequestAsync(context);
         }
         // try to get the idempotency value from cache
         return context;
