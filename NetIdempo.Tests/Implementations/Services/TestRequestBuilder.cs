@@ -16,14 +16,14 @@ public class TestRequestBuilder
             IdempotencyKeyLifetime = 60,
             Services = new Dictionary<string, ServiceConfig>
             {
-                { "TestApi", new ServiceConfig { BaseUrl = "https://testapi", Key = "testapi" } }
+                { "TestService1", new ServiceConfig { BaseUrl = "http://localhost:5262", Key = "testservice1" } }
             }
         });
         var context = new DefaultHttpContext();
         context.Request.Method = "GET";
         context.Request.Path = "/test";
         context.Request.QueryString = new QueryString("?param=value");
-        var serviceKey = "TestApi";
+        var serviceKey = "TestService1";
 
         var requestBuilder = new NetIdempo.Implementations.Services.RequestBuilder(options);
 
@@ -33,7 +33,7 @@ public class TestRequestBuilder
         // Assert
         Assert.NotNull(requestMessage);
         Assert.Equal("GET", requestMessage.Method.Method);
-        Assert.Equal("https://testapi/test?param=value", requestMessage.RequestUri?.ToString());
+        Assert.Equal("http://localhost:5262/test?param=value", requestMessage.RequestUri?.ToString());
     }
     
     [Fact]
@@ -46,7 +46,7 @@ public class TestRequestBuilder
             IdempotencyKeyLifetime = 60,
             Services = new Dictionary<string, ServiceConfig>
             {
-                { "TestApi", new ServiceConfig { BaseUrl = "https://testapi", Key = "testapi" } }
+                { "TestService1", new ServiceConfig { BaseUrl = "http://localhost:5262", Key = "testservice1" } }
             }
         });
         var context = new DefaultHttpContext();
@@ -54,7 +54,7 @@ public class TestRequestBuilder
         context.Request.Path = "/test";
         context.Request.QueryString = new QueryString("?param=value");
         context.Request.Body = new MemoryStream(System.Text.Encoding.UTF8.GetBytes("Test body"));
-        var serviceKey = "TestApi";
+        var serviceKey = "TestService1";
 
         var requestBuilder = new NetIdempo.Implementations.Services.RequestBuilder(options);
 
@@ -66,7 +66,7 @@ public class TestRequestBuilder
         
         Assert.NotNull(requestMessage);
         Assert.Equal("POST", requestMessage.Method.Method);
-        Assert.Equal("https://testapi/test?param=value", requestMessage.RequestUri?.ToString());
+        Assert.Equal("http://localhost:5262/test?param=value", requestMessage.RequestUri?.ToString());
         Assert.Equal("Test body",bodyString);
     }
 }

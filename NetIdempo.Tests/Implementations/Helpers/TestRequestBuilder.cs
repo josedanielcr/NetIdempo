@@ -16,16 +16,16 @@ public class TestRequestBuilder
             IdempotencyKeyLifetime = 60,
             Services = new Dictionary<string, ServiceConfig>
             {
-                { "TestApi", new ServiceConfig { BaseUrl = "https://testapi", Key = "testapi" } }
+                { "TestService1", new ServiceConfig { BaseUrl = "http://localhost:5262", Key = "testservice1" } }
             }
         });
         
         var requestBuilder = new RequestBuilder(options);
 
         // Act
-        var baseUrl = requestBuilder.GetBaseUrlFromServiceKey("TestApi");
+        var baseUrl = requestBuilder.GetBaseUrlFromServiceKey("TestService1");
 
         // Assert
-        Assert.Equal("https://testapi", baseUrl);
+        Assert.Equal("http://localhost:5262", baseUrl);
     }
 }
