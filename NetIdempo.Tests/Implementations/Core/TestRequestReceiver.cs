@@ -20,7 +20,7 @@ public class TestRequestReceiver
             IdempotencyKeyLifetime = 60,
             Services = new Dictionary<string, ServiceConfig>
             {
-                { "TestApi", new ServiceConfig { BaseUrl = "https://testapi", Key = "testapi" } }
+                { "TestService1", new ServiceConfig { BaseUrl = "http://localhost:5262", Key = "testservice1" } }
             }
         });
         
@@ -34,14 +34,21 @@ public class TestRequestReceiver
         var context = new DefaultHttpContext();
         var handler = new RequestReceiver(requestProcessor);
         
-        // Simulate a request
-        context.Request.Path = new PathString("/testapi/resource");
+        var responseStream = new MemoryStream();
+        context.Response.Body = responseStream;
+        
+        context.Request.Path = "/testservice1/weatherforecast";
         context.Request.Method = "GET";
 
         // Act
         var result = await handler.ReceiveRequestAsync(context);
+        
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var readerStream = new StreamReader(context.Response.Body);
+        var responseBody = await readerStream.ReadToEndAsync();
 
         // Assert
         Assert.Equal(context, result);
+        Assert.False(string.IsNullOrWhiteSpace(responseBody));
     }
 }
