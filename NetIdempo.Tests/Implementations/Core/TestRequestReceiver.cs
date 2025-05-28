@@ -20,7 +20,7 @@ public class TestRequestReceiver
             IdempotencyKeyLifetime = 60,
             Services = new Dictionary<string, ServiceConfig>
             {
-                { "TestApi", new ServiceConfig { BaseUrl = "https://testapi" } }
+                { "TestApi", new ServiceConfig { BaseUrl = "https://testapi", Key = "testapi" } }
             }
         });
         
@@ -33,6 +33,10 @@ public class TestRequestReceiver
         var requestProcessor = new RequestProcessor(options, contextReader, forwarder, idempotencyStore );
         var context = new DefaultHttpContext();
         var handler = new RequestReceiver(requestProcessor);
+        
+        // Simulate a request
+        context.Request.Path = new PathString("/testapi/resource");
+        context.Request.Method = "GET";
 
         // Act
         var result = await handler.ReceiveRequestAsync(context);

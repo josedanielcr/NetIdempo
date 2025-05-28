@@ -6,7 +6,7 @@ namespace NetIdempo.Tests.Implementations.Helpers;
 public class TestHeaderCopier
 {
     [Fact]
-    public void CopyHeaders_ShouldCopyHeaders()
+    public void CopyContextHeaders_ShouldTransferNonRestrictedHeadersToHttpRequestMessage()
     {
         //Arrange
         var context = new DefaultHttpContext();
@@ -15,7 +15,7 @@ public class TestHeaderCopier
         context.Request.Headers.Add("Another-Header", "AnotherValue");
         
         //Act
-        HeaderCopier.CopyHeaders(request, context);
+        HeaderCopier.CopyContextHeadersToRequest(context, request);
         
         //Assert
         Assert.True(request.Headers.Contains("Test-Header"));
@@ -25,7 +25,7 @@ public class TestHeaderCopier
     }
     
     [Fact]
-    public void CopyHeaders_ShouldNotCopyRestrictedHeaders()
+    public void CopyContextHeaders_ShouldNotTransferRestrictedHeadersToHttpRequestMessage()
     {
         //Arrange
         var context = new DefaultHttpContext();
@@ -33,9 +33,43 @@ public class TestHeaderCopier
         context.Request.Headers.Add("Host", "example.com");
         
         //Act
-        HeaderCopier.CopyHeaders(request, context);
+        HeaderCopier.CopyContextHeadersToRequest(context, request);
         
         //Assert
         Assert.NotEqual("example.com", request.Headers.Host);
+    }
+    
+    [Fact]
+    public void CopyResponseHeaders_ShouldTransferNonRestrictedHeadersToHttpContext()
+    {
+        //Arrange
+        var context = new DefaultHttpContext();
+        var response = new HttpResponseMessage();
+        response.Headers.Add("Test-Header", "TestValue");
+        response.Headers.Add("Another-Header", "AnotherValue");
+        
+        //Act
+        HeaderCopier.CopyResponseHeadersToContext(response, context);
+        
+        //Assert
+        Assert.True(context.Response.Headers.ContainsKey("Test-Header"));
+        Assert.Equal("TestValue", context.Response.Headers["Test-Header"]);
+        Assert.True(context.Response.Headers.ContainsKey("Another-Header"));
+        Assert.Equal("AnotherValue", context.Response.Headers["Another-Header"]);
+    }
+    
+    [Fact]
+    public void CopyResponseHeaders_ShouldNotTransferRestrictedHeadersToHttpContext()
+    {
+        //Arrange
+        var context = new DefaultHttpContext();
+        var response = new HttpResponseMessage();
+        response.Content.Headers.Add("Content-Length", "1234");
+        
+        //Act
+        HeaderCopier.CopyResponseHeadersToContext(response, context);
+        
+        //Assert
+        Assert.False(context.Response.Headers.ContainsKey("Content-Length"));
     }
 }

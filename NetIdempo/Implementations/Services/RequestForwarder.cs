@@ -13,6 +13,10 @@ public class RequestForwarder(IOptions<NetIdempoOptions> options, IContextReader
     public async Task<HttpContext> ForwardRequestAsync(HttpContext context)
     {
         var serviceKey = reader.GetServiceByPath(context);
+        if (string.IsNullOrEmpty(serviceKey))
+        {
+            throw new ArgumentException("Service key not found for the given request path.");
+        }
         HttpRequestMessage request = requestBuilder.BuildRequest(context, serviceKey); 
         await requestExecutor.ExecuteAsync(request, context);
         return context;

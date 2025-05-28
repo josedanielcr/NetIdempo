@@ -4,5 +4,5 @@ namespace NetIdempo.Abstractions.Services;
 
 public interface IRequestExecutor
 {
-    Task ExecuteAsync(HttpRequestMessage request, HttpContext context);
+    Task<HttpContext> ExecuteAsync(HttpRequestMessage request, HttpContext context);
 }

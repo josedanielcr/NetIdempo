@@ -15,7 +15,7 @@ public class RequestBuilder(IOptions<NetIdempoOptions> options) : IRequestBuilde
         {
             throw new ArgumentException($"Service with key '{serviceKey}' not found or has no base URL configured.");
         }
-        return BuildHttpRequestMessage(context, baseUrl);
+        return BuildHttpRequestMessage(context, baseUrl, serviceKey);
     }
 
     public string GetBaseUrlFromServiceKey(string serviceKey)
@@ -23,12 +23,18 @@ public class RequestBuilder(IOptions<NetIdempoOptions> options) : IRequestBuilde
         return options.Value.Services.FirstOrDefault(service => service.Key == serviceKey).Value.BaseUrl;
     }
 
-    private HttpRequestMessage BuildHttpRequestMessage(HttpContext context, string baseUrl)
+    private HttpRequestMessage BuildHttpRequestMessage(HttpContext context, string baseUrl, string serviceKey)
     {
         var method = new HttpMethod(context.Request.Method);
+        
+        if (context.Request.Path.StartsWithSegments($"/{serviceKey}", out var remainingPath))
+        {
+            context.Request.Path = remainingPath;
+        }
+        
         var request = new HttpRequestMessage(method, new Uri(new Uri(baseUrl), context.Request.Path + context.Request.QueryString));
-        HeaderCopier.CopyHeaders(request, context);
-        BodyCopier.CopyRequestBody(request, context);
+        HeaderCopier.CopyContextHeadersToRequest(context, request);
+        BodyCopier.CopyContextBodyToRequest(request, context);
         return request;
     }
 }
