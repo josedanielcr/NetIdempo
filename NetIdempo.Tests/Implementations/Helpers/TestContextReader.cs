@@ -25,7 +25,7 @@ public class TestContextReader
         context.Request.Headers["Idempotency-Key"] = "TestKey";
 
         // Act
-        var isKeyPresent = contextReader.IsKeyPresent(context);
+        var isKeyPresent = contextReader.IsIdempotencyKeyPresent(context);
 
         // Assert
         Assert.True(isKeyPresent, "Expected Idempotency Key to be present in the context.");
