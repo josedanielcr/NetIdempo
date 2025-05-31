@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
+using Moq;
 using NetIdempo.Common;
 using NetIdempo.Implementations.Core;
 using NetIdempo.Implementations.Helpers;
@@ -23,9 +25,13 @@ public class TestRequestReceiver
                 { "TestService1", new ServiceConfig { BaseUrl = "http://localhost:5262", Key = "testservice1" } }
             }
         });
+
+        var mockCache = new Mock<IDistributedCache>();
+        mockCache.Setup(cache => cache.GetStringAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string key, CancellationToken _) => null);
         
         var reader = new ContextReader(options);
-        var idempotencyStore = new IdempotencyStore();
+        var idempotencyStore = new IdempotencyStore(mockCache.Object, options);
         var requestBuilder = new RequestBuilder(options);
         var requestExecutor = new RequestExecutor(new HttpClient());
         var forwarder = new RequestForwarder(options, reader,requestBuilder, requestExecutor );

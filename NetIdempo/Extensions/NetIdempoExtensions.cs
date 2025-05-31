@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NetIdempo.Abstractions.Core;
 using NetIdempo.Abstractions.Helpers;
 using NetIdempo.Abstractions.Services;
+using NetIdempo.Abstractions.Store;
 using NetIdempo.Common;
 using NetIdempo.Implementations.Core;
 using NetIdempo.Implementations.Helpers;
@@ -34,16 +35,16 @@ public static class NetIdempoExtensions
 
     private static void AddHelperMethods(IServiceCollection services)
     {
-        services.AddSingleton<IContextReader, ContextReader>();
+        services.AddScoped<IContextReader, ContextReader>();
     }
 
     private static void AddCoreImplementations(IServiceCollection services)
     {
-        services.AddSingleton<IRequestReceiver, RequestReceiver>();
-        services.AddSingleton<IRequestProcessor, RequestProcessor>();
-        services.AddSingleton<IRequestForwarder, RequestForwarder>();
-        services.AddSingleton<IIdempotencyStore, IIdempotencyStore>();
-        services.AddSingleton<IRequestBuilder, RequestBuilder>();
-        services.AddSingleton<IRequestExecutor, RequestExecutor>();
+        services.AddScoped<IRequestReceiver, RequestReceiver>();
+        services.AddScoped<IRequestProcessor, RequestProcessor>();
+        services.AddScoped<IRequestForwarder, RequestForwarder>();
+        services.AddScoped<IIdempotencyStore, IIdempotencyStore>();
+        services.AddScoped<IRequestBuilder, RequestBuilder>();
+        services.AddScoped<IRequestExecutor, RequestExecutor>();
     }
 }

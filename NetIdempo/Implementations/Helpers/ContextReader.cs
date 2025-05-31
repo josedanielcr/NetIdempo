@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using NetIdempo.Abstractions.Helpers;
 using NetIdempo.Common;
 
@@ -7,7 +8,7 @@ namespace NetIdempo.Implementations.Helpers;
 
 public class ContextReader(IOptions<NetIdempoOptions> options) : IContextReader
 {
-    public bool IsKeyPresent(HttpContext? context)
+    public bool IsIdempotencyKeyPresent(HttpContext? context)
     {
         return context != null && context.Request.Headers.ContainsKey(options.Value.IdempotencyKeyHeader);
     }
@@ -23,5 +24,15 @@ public class ContextReader(IOptions<NetIdempoOptions> options) : IContextReader
             return service.Key;
         }
         return string.Empty;
+    }
+    
+    public StringValues GetKeyFromHttpRequest(HttpContext context)
+    {
+        var key = context.Request.Headers[options.Value.IdempotencyKeyHeader];
+        if (string.IsNullOrEmpty(key))
+        {
+            throw new ArgumentException("Idempotency key is missing in the request headers.");
+        }
+        return key;
     }
 }
