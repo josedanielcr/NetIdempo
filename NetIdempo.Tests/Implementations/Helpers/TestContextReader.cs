@@ -54,4 +54,24 @@ public class TestContextReader
         // Assert
         Assert.Equal("TestService1", serviceKey);
     }
+
+    [Fact]
+    public void GetKeyFromHttpRequest_ShouldReadKeyFromContextAndReturnItsValue()
+    {
+        // Arrange
+        var options = Options.Create(new NetIdempoOptions
+        {
+            IdempotencyKeyHeader = "Idempotency-Key"
+        });
+        
+        var contextReader = new ContextReader(options);
+        var context = new DefaultHttpContext();
+        context.Request.Headers["Idempotency-Key"] = "TestKey";
+        
+        // Act
+        var key = contextReader.GetKeyFromHttpRequest(context);
+        
+        // Assert
+        Assert.Equal("TestKey", key.ToString(), StringComparer.OrdinalIgnoreCase);
+    }
 }

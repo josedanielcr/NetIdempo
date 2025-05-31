@@ -11,10 +11,16 @@ public class IdempotencyStore(IDistributedCache cache, IOptions<NetIdempoOptions
 {
     public async Task<IdempotencyCacheEntry?> GetAsync(string key)
     {
-        var rawResult = await cache.GetStringAsync(key) 
-                        ?? throw new KeyNotFoundException();
-        var result = JsonSerializer.Deserialize<IdempotencyCacheEntry>(rawResult) 
-                     ?? throw new JsonException("Failed to deserialize IdempotencyCacheEntry");
+        var rawResult = await cache.GetStringAsync(key);
+        if (rawResult == "")
+        {
+            throw new KeyNotFoundException($"Idempotency key '{key}' not found in cache.");
+        }
+        var result = JsonSerializer.Deserialize<IdempotencyCacheEntry>(rawResult!);
+        if (result == null)
+        {
+            throw new JsonException($"Failed to deserialize IdempotencyCacheEntry for key '{key}'.");
+        }
         return result;
     }
 
