@@ -17,8 +17,16 @@ public class RequestForwarder(IOptions<NetIdempoOptions> options, IContextReader
         {
             throw new ArgumentException("Service key not found for the given request path.");
         }
-        HttpRequestMessage request = requestBuilder.BuildRequest(context, serviceKey); 
+        HttpRequestMessage request = await requestBuilder.BuildRequest(context, serviceKey); 
         await requestExecutor.ExecuteAsync(request, context);
         return context;
     }
+    
+    
+    
+    
+    
+    
+    
+    
 }

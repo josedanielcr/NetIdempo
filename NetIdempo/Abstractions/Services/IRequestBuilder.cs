@@ -4,5 +4,5 @@ namespace NetIdempo.Abstractions.Helpers;
 
 public interface IRequestBuilder
 {
-    HttpRequestMessage BuildRequest(HttpContext context, string serviceKey);
+    Task<HttpRequestMessage> BuildRequest(HttpContext context, string serviceKey);
 }

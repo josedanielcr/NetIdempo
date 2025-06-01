@@ -5,13 +5,13 @@ namespace NetIdempo.Implementations.Helpers;
 
 public static class BodyCopier
 {
-    public static HttpRequestMessage CopyContextBodyToRequest(HttpRequestMessage request, HttpContext context)
+    public static async Task<HttpRequestMessage> CopyContextBodyToRequest(HttpRequestMessage request, HttpContext context)
     {
         if (context.Request.Body is not { CanRead: true })
             return request;
 
         var buffer = new MemoryStream();
-        context.Request.Body.CopyTo(buffer);
+        await context.Request.Body.CopyToAsync(buffer);
         buffer.Position = 0;
 
         var content = new StreamContent(buffer);

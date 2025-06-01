@@ -34,7 +34,7 @@ public class TestRequestExecutor
     {
         // Arrange
         var executor = new NetIdempo.Implementations.Services.RequestExecutor(new HttpClient());
-        var request = new HttpRequestMessage(HttpMethod.Get, "http://example.com");
+        var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5262/weatherforecast");
         var context = new DefaultHttpContext();
 
         // Act

@@ -9,7 +9,7 @@ namespace NetIdempo.Tests.Implementations.Helpers;
 public class TestBodyCopier
 {
     [Fact]
-    public void CopyEmptyRequestBody_ShouldCreateEmptyHttpRequestMessageContent()
+    public async Task CopyEmptyRequestBody_ShouldCreateEmptyHttpRequestMessageContent()
     {
         // Arrange
         HttpContext context = new DefaultHttpContext();
@@ -19,7 +19,7 @@ public class TestBodyCopier
         context.Request.Body = null;
 
         // Act
-        BodyCopier.CopyContextBodyToRequest(request, context);
+        await BodyCopier.CopyContextBodyToRequest(request, context);
         
         // Assert
         Assert.Equal(context.Request.Body, request.Content?.ReadAsStreamAsync().Result);
