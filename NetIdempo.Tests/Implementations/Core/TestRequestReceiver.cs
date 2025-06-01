@@ -27,8 +27,7 @@ public class TestRequestReceiver
         });
 
         var mockCache = new Mock<IDistributedCache>();
-        mockCache.Setup(cache => cache.GetStringAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string key, CancellationToken _) => null);
+        mockCache.Setup(c => c.GetAsync(It.IsAny<string>(), default));
         
         var reader = new ContextReader(options);
         var idempotencyStore = new IdempotencyStore(mockCache.Object, options);

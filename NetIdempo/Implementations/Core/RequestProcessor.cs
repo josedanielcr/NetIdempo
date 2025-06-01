@@ -23,17 +23,10 @@ public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader
         var key = contextReader.GetKeyFromHttpRequest(context);
         var entry = await idempotencyStore.GetAsync(key!);
 
-        if (entry == null)
-        {
-            return await ForwardNewRequest(context, key);
-        }
-        else
-        {
-            if (HandlePendingIdempotentRequest(context, entry, key)) return context;
-            
-            
-        }
+        if (entry == null) return await ForwardNewRequest(context, key);
+        if (HandlePendingIdempotentRequest(context, entry, key)) return context;
         
+        IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
         return context;
     }
 

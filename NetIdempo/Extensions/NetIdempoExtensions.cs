@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NetIdempo.Abstractions.Core;
 using NetIdempo.Abstractions.Helpers;
@@ -8,6 +9,7 @@ using NetIdempo.Common;
 using NetIdempo.Implementations.Core;
 using NetIdempo.Implementations.Helpers;
 using NetIdempo.Implementations.Services;
+using NetIdempo.Implementations.Store;
 
 namespace NetIdempo.Extensions;
 
@@ -43,8 +45,13 @@ public static class NetIdempoExtensions
         services.AddScoped<IRequestReceiver, RequestReceiver>();
         services.AddScoped<IRequestProcessor, RequestProcessor>();
         services.AddScoped<IRequestForwarder, RequestForwarder>();
-        services.AddScoped<IIdempotencyStore, IIdempotencyStore>();
+        services.AddScoped<IIdempotencyStore, IdempotencyStore>();
         services.AddScoped<IRequestBuilder, RequestBuilder>();
         services.AddScoped<IRequestExecutor, RequestExecutor>();
+    }
+    
+    public static IApplicationBuilder UseNetIdempo(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<NetIdempoMiddleware>();
     }
 }

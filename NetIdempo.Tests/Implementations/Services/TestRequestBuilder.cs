@@ -7,7 +7,7 @@ namespace NetIdempo.Tests.Implementations.Services;
 public class TestRequestBuilder
 {
     [Fact]
-    public void BuildRequest_ShouldReturnGetHttpRequestMessage()
+    public async Task BuildRequest_ShouldReturnGetHttpRequestMessage()
     {
         // Arrange
         var options = Options.Create(new NetIdempoOptions
@@ -28,7 +28,7 @@ public class TestRequestBuilder
         var requestBuilder = new NetIdempo.Implementations.Services.RequestBuilder(options);
 
         // Act
-        var requestMessage = requestBuilder.BuildRequest(context, serviceKey);
+        var requestMessage = await requestBuilder.BuildRequest(context, serviceKey);
 
         // Assert
         Assert.NotNull(requestMessage);
@@ -59,7 +59,7 @@ public class TestRequestBuilder
         var requestBuilder = new NetIdempo.Implementations.Services.RequestBuilder(options);
 
         // Act
-        var requestMessage = requestBuilder.BuildRequest(context, serviceKey);
+        var requestMessage = await requestBuilder.BuildRequest(context, serviceKey);
 
         // Assert
         var bodyString = await requestMessage.Content?.ReadAsStringAsync()!;
