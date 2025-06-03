@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using NetIdempo.Abstractions.Services;
+using NetIdempo.Common;
 using NetIdempo.Implementations.Helpers;
 
 namespace NetIdempo.Implementations.Services;
 
 public class RequestExecutor(HttpClient httpClient) : IRequestExecutor
 {
-    public async Task<HttpContext> ExecuteAsync(HttpRequestMessage request, HttpContext context)
+    public async Task ExecuteAsync(HttpRequestMessage request, HttpContext context)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(context);
         var result = await ExecuteHttpRequest(request, context);
         await CopyHttpResponseToHttpContext(context, result);
-        return context;
     }
 
     private static async Task CopyHttpResponseToHttpContext(HttpContext context, HttpResponseMessage result)

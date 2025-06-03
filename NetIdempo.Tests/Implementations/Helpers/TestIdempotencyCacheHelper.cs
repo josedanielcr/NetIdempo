@@ -34,7 +34,7 @@ public class TestIdempotencyCacheHelper
     }
     
     [Fact]
-    public void CopyCachedResultToHttpContext_ShouldCopyHeadersToContext()
+    public async Task CopyCachedResultToHttpContext_ShouldCopyHeadersToContext()
     {
         // Arrange
         var context = new DefaultHttpContext();
@@ -49,7 +49,7 @@ public class TestIdempotencyCacheHelper
         };
 
         // Act
-        IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
+        await IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
 
         // Assert
         Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);
@@ -58,7 +58,7 @@ public class TestIdempotencyCacheHelper
     }
     
     [Fact]
-    public void CopyCachedResultToHttpContext_ShouldCopyBodyToContext()
+    public async Task CopyCachedResultToHttpContext_ShouldCopyBodyToContext()
     {
         // Arrange
         var context = new DefaultHttpContext();
@@ -74,7 +74,7 @@ public class TestIdempotencyCacheHelper
         };
 
         // Act
-        IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
+       await IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
 
         // Assert
         Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);
@@ -87,7 +87,7 @@ public class TestIdempotencyCacheHelper
     }
     
     [Fact]
-    public void CopyCachedResultToHttpContext_ShouldHandleNullHeadersAndBody()
+    public async Task CopyCachedResultToHttpContext_ShouldHandleNullHeadersAndBody()
     {
         // Arrange
         var context = new DefaultHttpContext();
@@ -99,7 +99,7 @@ public class TestIdempotencyCacheHelper
         };
 
         // Act
-        IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
+        await IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
 
         // Assert
         Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);

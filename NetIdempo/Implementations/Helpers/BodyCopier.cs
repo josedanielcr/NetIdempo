@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
+using NetIdempo.Common.Store;
 
 namespace NetIdempo.Implementations.Helpers;
 
@@ -27,6 +28,22 @@ public static class BodyCopier
     
     public static async Task CopyResponseBodyToContext(HttpResponseMessage response, HttpContext context)
     {
-        await response.Content.CopyToAsync(context.Response.Body, context.RequestAborted);
+        var memoryStream = new MemoryStream();
+        await response.Content.CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+        await memoryStream.CopyToAsync(context.Response.Body);
+        memoryStream.Position = 0;
+        response.Content = new StreamContent(memoryStream);
+    }
+    
+    public static async Task CopyContextBodyToCacheEntry(HttpContext context, IdempotencyCacheEntry entry)
+    {
+        if (context.Response.Body is not { CanRead: true })
+            return;
+
+        var memoryStream = new MemoryStream();
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        await context.Response.Body.CopyToAsync(memoryStream);
+        entry.ResponseBody = memoryStream.ToArray();
     }
 }

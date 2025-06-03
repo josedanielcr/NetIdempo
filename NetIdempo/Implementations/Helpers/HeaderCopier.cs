@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using NetIdempo.Common.Store;
 
 namespace NetIdempo.Implementations.Helpers;
 
@@ -31,7 +33,7 @@ public static class HeaderCopier
         CopyResponseHeaders(response.Headers, context);
         CopyResponseHeaders(response.Content?.Headers, context);
     }
-    
+
     private static void CopyResponseHeaders(HttpHeaders? headers, HttpContext context)
     {
         if (headers == null) return;
@@ -56,4 +58,20 @@ public static class HeaderCopier
         }
     }
     
+    public static void CopyContextResultHeadersToCacheEntry(
+        HttpContext context, IdempotencyCacheEntry entry)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(entry);
+
+        entry.Headers = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+        
+        foreach (var header in context.Response.Headers)
+        {
+            if (!RestrictedHeaders.Contains(header.Key))
+            {
+                entry.Headers[header.Key] = header.Value!;
+            }
+        }
+    }
 }
