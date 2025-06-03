@@ -12,14 +12,11 @@ public class IdempotencyStore(IDistributedCache cache, IOptions<NetIdempoOptions
     public async Task<IdempotencyCacheEntry?> GetAsync(string key)
     {
         var rawResult = await cache.GetStringAsync(key);
-        if (rawResult == "")
-        {
-            throw new KeyNotFoundException($"Idempotency key '{key}' not found in cache.");
-        }
+        if (string.IsNullOrEmpty(rawResult)) return null;
         var result = JsonSerializer.Deserialize<IdempotencyCacheEntry>(rawResult!);
-        if (result == null)
+        if (result is null)
         {
-            throw new JsonException($"Failed to deserialize IdempotencyCacheEntry for key '{key}'.");
+            throw new JsonException($"Failed to deserialize IdempotencyCacheEntry from cache for key: {key}. The data may be corrupted or in an unexpected format.");
         }
         return result;
     }

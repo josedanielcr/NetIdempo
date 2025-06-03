@@ -26,15 +26,17 @@ public class RequestBuilder(IOptions<NetIdempoOptions> options) : IRequestBuilde
     private async Task<HttpRequestMessage> BuildHttpRequestMessage(HttpContext context, string baseUrl, string serviceKey)
     {
         var method = new HttpMethod(context.Request.Method);
-        
-        if (context.Request.Path.StartsWithSegments($"/{serviceKey}", out var remainingPath))
-        {
-            context.Request.Path = remainingPath;
-        }
-        
-        var request = new HttpRequestMessage(method, new Uri(new Uri(baseUrl), context.Request.Path + context.Request.QueryString));
+        var serviceUrlKey = GetKeyFromServiceKeyIdentifier(serviceKey);
+        var index = context.Request.Path.ToString().IndexOf(serviceUrlKey, StringComparison.Ordinal);
+        var remainingPath = context.Request.Path.ToString().Substring(index + serviceUrlKey.Length).Trim();
+        var request = new HttpRequestMessage(method, new Uri(new Uri(baseUrl), remainingPath + context.Request.QueryString));
         HeaderCopier.CopyContextHeadersToRequest(context, request);
         await BodyCopier.CopyContextBodyToRequest(request, context);
         return request;
+    }
+
+    private string GetKeyFromServiceKeyIdentifier(string serviceKey)
+    {
+        return options.Value.Services.FirstOrDefault(service => service.Key == serviceKey).Value.Key;
     }
 }

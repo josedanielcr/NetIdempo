@@ -32,15 +32,16 @@ public class TestRequestExecutor
     [Fact]
     public async Task ExecuteAsync_ShouldReturnResponse_WhenRequestIsValid()
     {
+        
         // Arrange
         var executor = new NetIdempo.Implementations.Services.RequestExecutor(new HttpClient());
         var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5262/weatherforecast");
         var context = new DefaultHttpContext();
 
         // Act
-        var response = await executor.ExecuteAsync(request, context);
+        await executor.ExecuteAsync(request, context);
 
         // Assert
-        Assert.NotNull(response);
+        Assert.NotNull(context.Response);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace NetIdempo.Abstractions.Core;
+namespace NetIdempo.Abstractions.Services;
 
 public interface IRequestForwarder
 {
-    Task<HttpContext> ForwardRequestAsync(HttpContext context);
+    Task ForwardRequestAsync(HttpContext context);
 }

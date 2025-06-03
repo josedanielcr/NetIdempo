@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using NetIdempo.Common;
 using NetIdempo.Common.Store;
 
 namespace NetIdempo.Implementations.Helpers;
@@ -18,13 +20,13 @@ public static class IdempotencyCacheHelper
         };
     }
     
-    public static void CopyCachedResultToHttpContext(
+    public static async Task CopyCachedResultToHttpContext(
         IdempotencyCacheEntry entry, HttpContext context)
     {
         context.Response.StatusCode = entry.StatusCode ?? StatusCodes.Status200OK;
         context.Response.Headers.Clear();
         CopyCachedHttpHeadersToHttpContext(entry,context);
-        CopyCachedBodyToHttpContext(entry, context);
+        await CopyCachedBodyToHttpContext(entry, context);
     }
     
     private static void CopyCachedHttpHeadersToHttpContext(
@@ -37,10 +39,24 @@ public static class IdempotencyCacheHelper
         }
     }
     
-    private static void CopyCachedBodyToHttpContext(
+    private static async Task CopyCachedBodyToHttpContext(
         IdempotencyCacheEntry entry, HttpContext context)
     {
         if (entry.ResponseBody == null) return;
-        context.Response.Body.Write(entry.ResponseBody, 0, entry.ResponseBody.Length);
+        await context.Response.Body.WriteAsync(entry.ResponseBody, 0, entry.ResponseBody.Length);
+    }
+    
+    public static async Task<IdempotencyCacheEntry> CopyHttpContextResultToCacheEntry(
+        HttpContext context, string key)
+    {
+        var entry = new IdempotencyCacheEntry
+        {
+            Key = key,
+            StatusCode = context.Response.StatusCode,
+            IsCompleted = true
+        };
+        await BodyCopier.CopyContextBodyToCacheEntry(context, entry);
+        HeaderCopier.CopyContextResultHeadersToCacheEntry(context, entry);
+        return entry;
     }
 }
