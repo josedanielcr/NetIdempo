@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using NetIdempo.Abstractions.Core;
-using NetIdempo.Abstractions.Helpers;
+using NetIdempo.Abstractions.Helpers.HttpUtils;
 using NetIdempo.Abstractions.Services;
 using NetIdempo.Abstractions.Store;
 using NetIdempo.Common;
@@ -14,22 +14,25 @@ namespace NetIdempo.Implementations.Core;
 public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader contextReader, 
     IRequestForwarder forwarder, IIdempotencyStore idempotencyStore) : IRequestProcessor
 {
-    public async Task<HttpContext> ProcessRequestAsync(HttpContext context)
+    public async Task ProcessRequestAsync(HttpContext context)
     {
         if (!contextReader.IsIdempotencyKeyPresent(context))
         {
             await forwarder.ForwardRequestAsync(context);
-            return context;
+            return;
         }
 
         var key = contextReader.GetKeyFromHttpRequest(context);
         var entry = await idempotencyStore.GetAsync(key!);
 
-        if (entry == null) return await ForwardNewRequest(context, key);
-        if (HandlePendingIdempotentRequest(context, entry, key)) return context;
-        
+        if (entry == null)
+        {
+            await ForwardNewRequest(context, key);
+            return;
+        }
+
+        if (HandlePendingIdempotentRequest(context, entry, key)) return;
         await IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
-        return context;
     }
 
     private bool HandlePendingIdempotentRequest(HttpContext context, IdempotencyCacheEntry entry, StringValues key)
@@ -40,7 +43,7 @@ public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader
         return true;
     }
 
-    private async Task<HttpContext> ForwardNewRequest(HttpContext context, StringValues key)
+    private async Task ForwardNewRequest(HttpContext context, StringValues key)
     {
         context.Response.Headers[options.Value.IdempotencyKeyHeader] = key;
         var originalBodyStream = context.Response.Body;
@@ -60,6 +63,5 @@ public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader
         await idempotencyStore.SetAsync(entry);
         
         context.Response.Body = originalBodyStream;
-        return context;
     }
 }

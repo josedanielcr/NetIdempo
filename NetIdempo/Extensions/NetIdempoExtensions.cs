@@ -3,11 +3,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NetIdempo.Abstractions.Core;
 using NetIdempo.Abstractions.Helpers;
+using NetIdempo.Abstractions.Helpers.Body;
+using NetIdempo.Abstractions.Helpers.Config;
+using NetIdempo.Abstractions.Helpers.Headers;
+using NetIdempo.Abstractions.Helpers.HttpUtils;
 using NetIdempo.Abstractions.Services;
 using NetIdempo.Abstractions.Store;
 using NetIdempo.Common;
 using NetIdempo.Implementations.Core;
-using NetIdempo.Implementations.Helpers;
+using NetIdempo.Implementations.Helpers.Body;
+using NetIdempo.Implementations.Helpers.Config;
+using NetIdempo.Implementations.Helpers.Headers;
+using NetIdempo.Implementations.Helpers.HttpUtils;
 using NetIdempo.Implementations.Services;
 using NetIdempo.Implementations.Store;
 
@@ -38,6 +45,15 @@ public static class NetIdempoExtensions
     private static void AddHelperMethods(IServiceCollection services)
     {
         services.AddScoped<IContextReader, ContextReader>();
+        services.AddScoped<IOptionsReader, OptionsReader>();
+        services.AddScoped<IRequestBodyCopier, RequestBodyCopier>();
+        services.AddScoped<IResponseBodyCopier, ResponseBodyCopier>();
+        services.AddScoped<ICacheBodyCopier, CacheBodyCopier>();
+        services.AddScoped<ICacheHeaderCopier, CacheHeaderCopier>();
+        services.AddScoped<IRequestHeaderCopier, RequestHeaderCopier>();
+        services.AddScoped<IResponseHeaderCopier, ResponseHeaderCopier>();
+        services.AddScoped<IHttpResponseCopier, HttpResponseCopier>();
+        services.AddScoped<IHttpRequestBuilder, HttpRequestBuilder>();
     }
 
     private static void AddCoreImplementations(IServiceCollection services)
