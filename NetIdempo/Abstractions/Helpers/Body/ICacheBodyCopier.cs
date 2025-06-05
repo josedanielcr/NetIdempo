@@ -5,5 +5,6 @@ namespace NetIdempo.Abstractions.Helpers.Body;
 
 public interface ICacheBodyCopier
 {
-    Task CopyFromContextAsync(HttpContext context, IdempotencyCacheEntry entry);
+    Task CopyFromHttpContextAsync(HttpContext context, IdempotencyCacheEntry entry);
+    Task CopyToHttpContextAsync(IdempotencyCacheEntry entry, HttpContext context);
 }

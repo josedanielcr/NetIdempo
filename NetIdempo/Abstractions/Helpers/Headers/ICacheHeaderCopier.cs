@@ -5,5 +5,6 @@ namespace NetIdempo.Abstractions.Helpers.Headers;
 
 public interface ICacheHeaderCopier
 {
-    void CopyContextResultHeadersToCacheEntry(HttpContext context, IdempotencyCacheEntry entry);
+    void CopyFromHttpContext(HttpContext context, IdempotencyCacheEntry entry);
+    void CopyToHttpContext(HttpContext context, IdempotencyCacheEntry entry);
 }

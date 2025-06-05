@@ -7,7 +7,7 @@ namespace NetIdempo.Implementations.Helpers.Headers;
 
 public class CacheHeaderCopier : ICacheHeaderCopier
 {
-    public void CopyContextResultHeadersToCacheEntry(HttpContext context, IdempotencyCacheEntry entry)
+    public void CopyFromHttpContext(HttpContext context, IdempotencyCacheEntry entry)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(entry);
@@ -20,6 +20,15 @@ public class CacheHeaderCopier : ICacheHeaderCopier
             {
                 entry.Headers[header.Key] = header.Value!;
             }
+        }
+    }
+
+    public void CopyToHttpContext(HttpContext context, IdempotencyCacheEntry entry)
+    {
+        if (entry.Headers == null) return;
+        foreach (var header in entry.Headers)
+        {
+            context.Response.Headers[header.Key] = header.Value;
         }
     }
 }

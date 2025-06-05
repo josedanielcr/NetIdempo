@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using NetIdempo.Abstractions.Core;
+using NetIdempo.Abstractions.Helpers.Cache;
 using NetIdempo.Abstractions.Helpers.HttpUtils;
 using NetIdempo.Abstractions.Services;
 using NetIdempo.Abstractions.Store;
@@ -12,7 +13,9 @@ using NetIdempo.Implementations.Helpers;
 namespace NetIdempo.Implementations.Core;
 
 public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader contextReader, 
-    IRequestForwarder forwarder, IIdempotencyStore idempotencyStore) : IRequestProcessor
+    IRequestForwarder forwarder, IIdempotencyStore idempotencyStore,
+    ICacheResponseApplier cacheResponseApplier,
+    ICacheEntryFactory cacheEntryFactory) : IRequestProcessor
 {
     public async Task ProcessRequestAsync(HttpContext context)
     {
@@ -32,7 +35,7 @@ public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader
         }
 
         if (HandlePendingIdempotentRequest(context, entry, key)) return;
-        await IdempotencyCacheHelper.CopyCachedResultToHttpContext(entry, context);
+        await cacheResponseApplier.ApplyToContextAsync(entry, context);
     }
 
     private bool HandlePendingIdempotentRequest(HttpContext context, IdempotencyCacheEntry entry, StringValues key)
@@ -50,7 +53,7 @@ public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader
         using var memoryStream = new MemoryStream();
         context.Response.Body = memoryStream;
         
-        var cacheEntry = IdempotencyCacheHelper.CreateEmptyCacheEntry(key!);
+        var cacheEntry = cacheEntryFactory.CreateEmpty(key!);
         await idempotencyStore.SetAsync(cacheEntry);
         
         await forwarder.ForwardRequestAsync(context);
@@ -59,9 +62,8 @@ public class RequestProcessor(IOptions<NetIdempoOptions> options, IContextReader
         await memoryStream.CopyToAsync(originalBodyStream);
         memoryStream.Position = 0;
         
-        var entry = await IdempotencyCacheHelper.CopyHttpContextResultToCacheEntry(context, cacheEntry.Key);
+        var entry = await cacheEntryFactory.CreateFromHttpContextAsync(context, cacheEntry.Key);
         await idempotencyStore.SetAsync(entry);
-        
         context.Response.Body = originalBodyStream;
     }
 }

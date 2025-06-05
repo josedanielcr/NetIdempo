@@ -18,9 +18,4 @@
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0-preview.4.25258.110" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Abstractions\Helpers\Cache\" />
-      <Folder Include="Implementations\Helpers\Cache\" />
-    </ItemGroup>
-
 </Project>
