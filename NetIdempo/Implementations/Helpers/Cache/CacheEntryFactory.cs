@@ -11,6 +11,7 @@ public class CacheEntryFactory(ICacheHeaderCopier cacheHeaderCopier,
 {
     public IdempotencyCacheEntry CreateEmpty(string key)
     {
+        if (string.IsNullOrWhiteSpace(key)) return null!;
         return new IdempotencyCacheEntry
         {
             Key = key,

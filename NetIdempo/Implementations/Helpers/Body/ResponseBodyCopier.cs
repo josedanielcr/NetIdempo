@@ -7,6 +7,10 @@ public class ResponseBodyCopier : IResponseBodyCopier
 {
     public async Task CopyToHttpContextAsync(HttpResponseMessage response, HttpContext context)
     {
+        if (response == null)
+        {
+            throw new ArgumentNullException(nameof(response), "Response cannot be null.");
+        }
         var memoryStream = new MemoryStream();
         await response.Content.CopyToAsync(memoryStream);
         memoryStream.Position = 0;
