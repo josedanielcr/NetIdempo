@@ -46,18 +46,24 @@ public static class NetIdempoExtensions
 
     private static void AddHelperMethods(IServiceCollection services)
     {
-        services.AddScoped<IContextReader, ContextReader>();
-        services.AddScoped<IOptionsReader, OptionsReader>();
         services.AddScoped<IRequestBodyCopier, RequestBodyCopier>();
         services.AddScoped<IResponseBodyCopier, ResponseBodyCopier>();
         services.AddScoped<ICacheBodyCopier, CacheBodyCopier>();
+        
+        services.AddScoped<ICacheEntryFactory, CacheEntryFactory>();
+        services.AddScoped<ICacheResponseApplier, CacheResponseApplier>();
+        
+        services.AddScoped<IOptionsReader, OptionsReader>();
+        
         services.AddScoped<ICacheHeaderCopier, CacheHeaderCopier>();
         services.AddScoped<IRequestHeaderCopier, RequestHeaderCopier>();
         services.AddScoped<IResponseHeaderCopier, ResponseHeaderCopier>();
+        
+        
+        services.AddScoped<IContextReader, ContextReader>();
         services.AddScoped<IHttpResponseCopier, HttpResponseCopier>();
         services.AddScoped<IHttpRequestBuilder, HttpRequestBuilder>();
-        services.AddScoped<ICacheEntryFactory, CacheEntryFactory>();
-        services.AddScoped<ICacheResponseApplier, CacheResponseApplier>();
+        services.AddScoped<IHttpRequestCopier, HttpRequestCopier>();
     }
 
     private static void AddCoreImplementations(IServiceCollection services)

@@ -22,7 +22,6 @@ public class CacheBodyCopier : ICacheBodyCopier
         if (entry.ResponseBody == null || context.Response.Body is not { CanWrite: true })
             return;
         
-        context.Response.Body.Seek(0, SeekOrigin.Begin);
         await context.Response.Body.WriteAsync(entry.ResponseBody, 0, entry.ResponseBody.Length);
     }
 }
