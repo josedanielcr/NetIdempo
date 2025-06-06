@@ -5,8 +5,8 @@ namespace NetIdempo.Implementations.Core;
 
 public class RequestReceiver(IRequestProcessor requestProcessor): IRequestReceiver
 {
-    public async Task<HttpContext> ReceiveRequestAsync(HttpContext context)
+    public async Task ReceiveRequestAsync(HttpContext context)
     {
-         return await requestProcessor.ProcessRequestAsync(context);
+         await requestProcessor.ProcessRequestAsync(context);
     }
 }

@@ -4,5 +4,5 @@ namespace NetIdempo.Abstractions.Core;
 
 public interface IRequestProcessor
 {
-    Task<HttpContext> ProcessRequestAsync(HttpContext context);
+    Task ProcessRequestAsync(HttpContext context);
 }
