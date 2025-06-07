@@ -22,11 +22,13 @@ public class OptionsReader(IOptions<NetIdempoOptions> options) : IOptionsReader
     
     public string GetDestinationServiceBaseUrlFromOptions(string serviceKey)
     {
-        return options.Value.Services.FirstOrDefault(service => service.Key == serviceKey).Value.BaseUrl;
+        var service = options.Value.Services.FirstOrDefault(s => s.Key == serviceKey).Value;
+        return service?.BaseUrl ?? string.Empty;
     }
     
     public string GetPathPrefixByServiceKey(string serviceKey)
     {
-        return options.Value.Services.FirstOrDefault(service => service.Key == serviceKey).Value.PathPrefix;
+        var service = options.Value.Services.FirstOrDefault(service => service.Key == serviceKey).Value;
+        return service?.PathPrefix ?? string.Empty;
     }
 }
