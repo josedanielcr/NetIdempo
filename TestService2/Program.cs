@@ -14,28 +14,70 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// In-memory store
+var forecasts = new List<WeatherForecast>();
+var idCounter = 1;
 
-app.MapGet("/weatherforecast", () =>
+// CREATE
+app.MapPost("/weatherforecast", (WeatherForecastInput input) =>
+{
+    var forecast = new WeatherForecast
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+        Id = idCounter++,
+        Date = input.Date,
+        TemperatureC = input.TemperatureC,
+        Summary = input.Summary
+    };
+    forecasts.Add(forecast);
+    return Results.Created($"/weatherforecast/{forecast.Id}", forecast);
+});
+
+// READ ALL
+app.MapGet("/weatherforecast", () =>
+{
+    return Results.Ok(forecasts);
+});
+
+// READ BY ID
+app.MapGet("/weatherforecast/{id:int}", (int id) =>
+{
+    var forecast = forecasts.FirstOrDefault(f => f.Id == id);
+    return forecast is not null ? Results.Ok(forecast) : Results.NotFound();
+});
+
+// UPDATE
+app.MapPut("/weatherforecast/{id:int}", (int id, WeatherForecastInput input) =>
+{
+    var forecast = forecasts.FirstOrDefault(f => f.Id == id);
+    if (forecast is null) return Results.NotFound();
+
+    forecast.Date = input.Date;
+    forecast.TemperatureC = input.TemperatureC;
+    forecast.Summary = input.Summary;
+
+    return Results.Ok(forecast);
+});
+
+// DELETE
+app.MapDelete("/weatherforecast/{id:int}", (int id) =>
+{
+    var forecast = forecasts.FirstOrDefault(f => f.Id == id);
+    if (forecast is null) return Results.NotFound();
+
+    forecasts.Remove(forecast);
+    return Results.NoContent();
+});
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+// Models
+record WeatherForecastInput(DateOnly Date, int TemperatureC, string? Summary);
+
+class WeatherForecast
 {
+    public int Id { get; set; }
+    public DateOnly Date { get; set; }
+    public int TemperatureC { get; set; }
+    public string? Summary { get; set; }
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
