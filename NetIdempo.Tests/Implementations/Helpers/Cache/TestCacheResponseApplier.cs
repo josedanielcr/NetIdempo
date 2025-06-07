@@ -23,6 +23,7 @@ public class TestCacheResponseApplier
             ResponseBody = Encoding.UTF8.GetBytes("Test body content")
         };
         var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream(); 
 
         // Act
         await applier.ApplyToContextAsync(entry, context);
@@ -30,6 +31,7 @@ public class TestCacheResponseApplier
         // Assert
         Assert.Equal(200, context.Response.StatusCode);
         Assert.Equal(["hello"], context.Response.Headers["Test-Header"]!);
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
         using var reader = new StreamReader(context.Response.Body);
         var bodyContent = await reader.ReadToEndAsync();
         Assert.Equal("Test body content", bodyContent);

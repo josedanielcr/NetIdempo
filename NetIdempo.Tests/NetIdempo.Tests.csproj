@@ -25,11 +25,4 @@
       <ProjectReference Include="..\NetIdempo\NetIdempo.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Implementations\Core\" />
-      <Folder Include="Implementations\Helpers\Headers\" />
-      <Folder Include="Implementations\Helpers\HttpUtils\" />
-      <Folder Include="Implementations\Services\" />
-    </ItemGroup>
-
 </Project>
